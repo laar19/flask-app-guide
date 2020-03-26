@@ -1,0 +1,20 @@
+{% extends "base/base.html" %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block content %}
+
+    {% from "_macro.html" import render_field %}
+
+    <h2>INDEX</h2>
+
+    <div style="width: 50%; margin: 0 auto;">
+        <img src="{{ url_for('static', filename='img/pinguino.jpg') }}">
+    </div>
+
+    <div style="height: 20px;;">
+    </div>
+
+    {% include "base/footer.html" %}
+
+{% endblock %}

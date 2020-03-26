@@ -1,0 +1,26 @@
+{% extends "base/base.html" %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block content %}
+
+    {% from "_macro.html" import render_field %}
+
+    <div class="login-page">
+        <div class="form">
+            <!--form id="create-form" action="" method="POST"-->
+            <form id="" class="login-form" action="" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                
+                {{ render_field(form.username, class="form-control login-field") }}
+                {{ render_field(form.email, class="form-control login-field") }}
+                {{ render_field(form.password, class="login-field") }}
+            
+                <button type="submint">Sign Up</button>
+            
+                <p class="message">Have an account? <a href="{{ url_for('login') }}">Log In</a></p>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
