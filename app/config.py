@@ -20,7 +20,7 @@ class Config(object):
     MAIL_PASSWORD = conf["Config"]["MAIL_PASSWORD"] # ES MEJOR HACERLO CON VARIABLES DE ENTORNO
 
 class DevelopmentConfig(Config):
-    DEBUG = False
+    DEBUG = conf["DevelopmentConfig"]["DEBUG"]
     SQLALCHEMY_DATABASE_URI = conf["DevelopmentConfig"]["SQLALCHEMY_DATABASE_URI"]
     #SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:root@localhost/curso_flask"
     SQLALCHEMY_TRACK_MODIFICATIONS = conf["DevelopmentConfig"]["SQLALCHEMY_TRACK_MODIFICATIONS"]

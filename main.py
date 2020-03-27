@@ -1,4 +1,3 @@
-#from flask      import Flask, redirect, url_for, session, make_response
 from flask      import Flask, make_response
 from flask      import request, flash, copy_current_request_context
 from flask_wtf  import CSRFProtect
@@ -9,7 +8,7 @@ from app.models import db, User, Comment
 from app.helper import *
 from app.forms  import *
 
-import json, threading
+import threading
 
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)
@@ -88,10 +87,30 @@ def reviews(page=1):
     per_page = 3
     comments = Comment.query.join(User).add_columns(
         User.username,
+        Comment.id,
         Comment.text,
         Comment.create_date).paginate(page, per_page, False)
 
-    return render_template("reviews.html", comments=comments, date_format=date_format)
+    return render_template("reviews.html",
+                            comments=comments,
+                            date_format=date_format,
+                            delete_comment=delete_comment,
+                            id=None,
+                            redirect=redirect)
+
+@app.route("/delete_comment", methods=["POST"])
+def delete_comment():
+    if request.method == "POST":
+        comment = request.form["comment"]
+        id_     = request.form["id_"]
+
+        comment = Comment.query.filter_by(id=id_).first()
+        db.session.delete(comment)
+        db.session.commit()
+
+        success_message = "Comentario eliminado"
+        flash(success_message)
+    return redirect(url_for("reviews"))
 
 @app.route("/logout")
 def logout():
