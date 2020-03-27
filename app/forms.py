@@ -22,14 +22,6 @@ class CreateForm(Form):
 
     password = PasswordField("Password",
         [validators.Required(message="Campo requerido")])
-
-    def validate_username(form, field):
-        username = field.data
-        user = User.query.filter_by(username=username).first()
-
-        if user is not None:
-            print("El nombre de usuario ya se encuentra registrado")
-            raise validators.ValidationError("El nombre de usuario ya se encuentra registrado")
             
 class CommentForm(Form):
     comment = TextField("Comentario",

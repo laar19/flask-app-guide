@@ -1,0 +1,20 @@
+{% extends "base/base.html" %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block content %}
+
+    {% from "_macro.html" import render_field %}
+
+    <div class="login-page">
+        <div class="form">
+            <form method="POST" action="/update_comment">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="text" class="form-field" name="comment_text" value="{{ comment_text }}">
+                <input type="hidden" name="id_" value="{{ id_ }}">
+                <button type="submit">update</button>
+            </form>        
+        </div>
+    </div>
+
+{% endblock %}

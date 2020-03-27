@@ -11,8 +11,8 @@
             <form id="" class="login-form" action="" method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 
-                {{ render_field(form.username, class="login-field", id="username") }}
-                {{ render_field(form.password, class="login-field", id="password") }}
+                {{ render_field(form.username, class="form-field", id="username") }}
+                {{ render_field(form.password, class="form-field", id="password") }}
             
                 <button type="submint">Log in</button>
             

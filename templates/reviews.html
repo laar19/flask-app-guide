@@ -15,11 +15,13 @@
                         <p> {{ i.text }} </p>
                     </div>
 
-                    <form method="POST" action="/delete_comment">
+                    <form method="POST" action="/update_delete">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <input type="hidden" name="comment" value="{{ i[0] }}">
+                        <input type="hidden" name="comment_text" value="{{ i.text }}">
                         <input type="hidden" name="id_" value="{{ i.id }}">
-                        <button type="submit">Delete</button>
+                        <button type="submit" name="operation" value="1">Update</button>
+                        <button type="submit" name="operation" value="2">Delete</button>
                     </form>
                 </div>
             {% endfor %}

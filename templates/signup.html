@@ -6,15 +6,14 @@
 
     {% from "_macro.html" import render_field %}
 
-    <div class="login-page">
+    <div class="signup-page">
         <div class="form">
-            <!--form id="create-form" action="" method="POST"-->
-            <form id="" class="login-form" action="" method="POST">
+            <form method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 
-                {{ render_field(form.username, class="form-control login-field") }}
-                {{ render_field(form.email, class="form-control login-field") }}
-                {{ render_field(form.password, class="login-field") }}
+                {{ render_field(form.username, class="form-field") }}
+                {{ render_field(form.email,    class="form-field") }}
+                {{ render_field(form.password, class="form-field") }}
             
                 <button type="submint">Sign Up</button>
             

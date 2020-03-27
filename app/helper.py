@@ -26,3 +26,19 @@ def send_email(user_email, username):
         recipients = [user_email])
     msg.html = render_template("email.html", username=username)
     mail.send(msg)
+
+def delete_comment(Comment, db, id_, flash):
+    comment = Comment.query.filter_by(id=id_).first()
+    db.session.delete(comment)
+    db.session.commit()
+
+    success_message = "Comentario eliminado"
+    flash(success_message)
+
+def comment_update(Comment, db, id_, comment_text, flash):
+    comment = Comment.query.filter_by(id=id_).first()
+    comment.text = comment_text
+    db.session.commit()
+
+    success_message = "Comentario actualizado"
+    flash(success_message)
