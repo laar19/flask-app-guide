@@ -78,26 +78,40 @@ def comment():
     title = "Curso Flask"
 
     return render_template("comment.html", title=title, form=comment_form)
-    
-@app.route("/reviews", methods=["GET"])
-@app.route("/reviews/<int:page>", methods=["GET"])
-def reviews(page=1):
+
+@app.route("/reviews")
+def reviews():
     if not check_login(username="username"):
         return redirect(url_for("login"))
 
+    page = request.args.get("page", 1, type=int)
     per_page = 3
+    # Normal order
+    """
     comments = Comment.query.join(User).add_columns(
         User.username,
         Comment.id,
         Comment.text,
-        Comment.create_date).paginate(page, per_page, False)
-
+        Comment.create_date).order_by(Comment.create_date.desc()).paginate(page, per_page, False)
+    """
+    # Reverse order: .order_by(Comment.create_date.desc())
+    comments = Comment.query.join(User).add_columns(
+        User.username,
+        Comment.id,
+        Comment.text,
+        Comment.create_date).order_by(Comment.create_date.desc()).paginate(page, per_page, False)
+    next_url = url_for("reviews", page=comments.next_num) \
+        if comments.has_next else None
+    prev_url = url_for("reviews", page=comments.prev_num) \
+        if comments.has_prev else None
     return render_template("reviews.html",
                             comments=comments,
                             date_format=date_format,
                             delete_comment=delete_comment,
                             id=None,
-                            redirect=redirect)
+                            redirect=redirect,
+                            next_url=next_url,
+                            prev_url=prev_url)
 
 @app.route("/logout")
 def logout():

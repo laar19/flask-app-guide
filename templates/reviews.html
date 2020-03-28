@@ -25,6 +25,16 @@
                     </form>
                 </div>
             {% endfor %}
+
+            <br>
+
+            {% if prev_url %}
+                <a href="{{ prev_url }}"> <button> Newer commets </button> </a>
+            {% endif %}
+            {% if next_url %}
+                <a href="{{ next_url }}"> <button> Older commets </button> </a>
+            {% endif %}
+
         {% endif %}
     </div>
 
