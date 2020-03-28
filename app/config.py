@@ -25,5 +25,7 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI        = os.environ.get("SQLALCHEMY_DATABASE_URI")
     SQLALCHEMY_TRACK_MODIFICATIONS = verify_boolean(os.environ.get("SQLALCHEMY_TRACK_MODIFICATIONS"))
 
+    """
     if not database_exists(SQLALCHEMY_DATABASE_URI):
         create_database(SQLALCHEMY_DATABASE_URI)
+    """
