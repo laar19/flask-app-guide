@@ -2,8 +2,10 @@ from sqlalchemy_utils import create_database, database_exists
 from werkzeug.security import generate_password_hash
 import os, json, datetime
 
-with open("app/config.json") as f:
-    conf = json.load(f)
+def verify_boolean(var):
+    if var == "false":
+        return False
+    return True
 
 class Config(object):
     #SECRET_KEY = "my_secret_key" # DEBE SER 100% SECRETO, QUE NADIE TENGA ACCESO, puede ser encriptado en la base de datos
@@ -11,19 +13,17 @@ class Config(object):
     
     # para gmail se necesita activar el acceso a aplicaciones
     # poco seguras https://myaccount.google.com/lesssecureapps
-    MAIL_SERVER   = conf["Config"]["MAIL_SERVER"]
-    MAIL_PORT     = conf["Config"]["MAIL_PORT"]
-    MAIL_USE_SSL  = conf["Config"]["MAIL_USE_SSL"]
-    MAIL_USE_TLS  = conf["Config"]["MAIL_USE_TLS"]
-    MAIL_USERNAME = conf["Config"]["MAIL_USERNAME"]
-    #MAIL_PASSWORD = os.environ.get("PASSWORD_EMAIL_CF")
-    MAIL_PASSWORD = conf["Config"]["MAIL_PASSWORD"] # ES MEJOR HACERLO CON VARIABLES DE ENTORNO
+    MAIL_SERVER   = os.environ.get("MAIL_SERVER")
+    MAIL_PORT     = int(os.environ.get("MAIL_PORT"))
+    MAIL_USE_SSL  = verify_boolean(os.environ.get("MAIL_USE_SSL"))
+    MAIL_USE_TLS  = verify_boolean(os.environ.get("MAIL_USE_TLS"))
+    MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
+    MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
 
 class DevelopmentConfig(Config):
-    DEBUG = conf["DevelopmentConfig"]["DEBUG"]
-    SQLALCHEMY_DATABASE_URI = conf["DevelopmentConfig"]["SQLALCHEMY_DATABASE_URI"]
-    #SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:root@localhost/curso_flask"
-    SQLALCHEMY_TRACK_MODIFICATIONS = conf["DevelopmentConfig"]["SQLALCHEMY_TRACK_MODIFICATIONS"]
+    DEBUG                          = verify_boolean(os.environ.get("DEBUG"))
+    SQLALCHEMY_DATABASE_URI        = os.environ.get("SQLALCHEMY_DATABASE_URI")
+    SQLALCHEMY_TRACK_MODIFICATIONS = verify_boolean(os.environ.get("SQLALCHEMY_TRACK_MODIFICATIONS"))
 
     if not database_exists(SQLALCHEMY_DATABASE_URI):
         create_database(SQLALCHEMY_DATABASE_URI)
