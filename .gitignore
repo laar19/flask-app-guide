@@ -1,6 +1,7 @@
 #############################
 # CUSTOM
 config.sh
+config_heroku.sh
 
 #############################
 # OTHERS
