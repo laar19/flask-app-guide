@@ -1,6 +1,6 @@
 from sqlalchemy_utils import create_database, database_exists
 from werkzeug.security import generate_password_hash
-import os, json, datetime
+import os, datetime
 
 def verify_boolean(var):
     if var == "false":
