@@ -1,7 +1,6 @@
 #############################
-# FILES
-config_localhost.sh
-config_heroku.sh
+# FOLDERS
+config/
 
 # VIRTUALENV
 bin/
