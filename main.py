@@ -17,22 +17,44 @@ csrf = CSRFProtect(app)
 
 mail = Mail()
 
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template("404.html"), 404
-
 @app.route("/")
 @app.route("/index")
 def index():
     if not check_login(username="username"):
         return redirect(url_for("login"))
     return render_template("index.html", title="Inicio")
+    
+# Crear nuevo usuario
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    create_form = CreateForm(request.form)
 
-@app.route("/cookie")
-def cookie():
-    response = make_response(render_template("cookie.html"))
-    response.set_cookie("nombre_cookie", "valor_cualquiera")
-    return response
+    if request.method == "POST" and create_form.validate():
+        user = User(username = create_form.username.data,
+                    email    = create_form.email.data,
+                    password = create_form.password.data)
+
+        try:
+            db.session.add(user)
+            db.session.commit()
+        except exc.IntegrityError:
+            error_message = "El nombre de usuario ya se encuentra registrado"
+            flash(error_message)
+        else:
+            @copy_current_request_context
+            def send_message(email, username, app, mail):
+                send_email(email, username, app, mail)
+                
+            sender = threading.Thread(name   = "mail_sender",
+                                      target = send_message,
+                                      args   = (user.email, user.username, app, mail))
+            sender.start()
+
+            success_message = "Usuario registrado con éxito"
+            flash(success_message)
+            return redirect(url_for("login"))
+
+    return render_template("signup.html", form=create_form)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -55,6 +77,14 @@ def login():
 
     return render_template("login.html", form=login_form)
     
+# Cerrar sesión
+@app.route("/logout")
+def logout():
+    if "username" in session:
+        session.pop("username")
+    return redirect(url_for("login"))
+
+# Página para crear comentarios
 @app.route("/comment", methods=["GET", "POST"])
 def comment():
     if not check_login(username="username"):
@@ -79,6 +109,7 @@ def comment():
 
     return render_template("comment.html", title=title, form=comment_form)
 
+# Página que muestra los comentarios
 @app.route("/reviews")
 def reviews():
     if not check_login(username="username"):
@@ -113,43 +144,7 @@ def reviews():
                             next_url=next_url,
                             prev_url=prev_url)
 
-@app.route("/logout")
-def logout():
-    if "username" in session:
-        session.pop("username")
-    return redirect(url_for("login"))
-
-@app.route("/signup", methods=["GET", "POST"])
-def signup():
-    create_form = CreateForm(request.form)
-
-    if request.method == "POST" and create_form.validate():
-        user = User(username = create_form.username.data,
-                    email    = create_form.email.data,
-                    password = create_form.password.data)
-
-        try:
-            db.session.add(user)
-            db.session.commit()
-        except exc.IntegrityError:
-            error_message = "El nombre de usuario ya se encuentra registrado"
-            flash(error_message)
-        else:
-            @copy_current_request_context
-            def send_message(email, username):
-                send_email(email, username)
-                
-            sender = threading.Thread(name   = "mail_sender",
-                                    target = send_message,
-                                    args   = (user.email, user.username))
-            sender.start()
-
-            success_message = "Usuario registrado con éxito"
-            flash(success_message)
-            return redirect(url_for("login"))
-
-    return render_template("signup.html", form=create_form)
-
+# Redirecciona dependiendo si se pesionó el botón update o delete
 @app.route("/update_delete", methods=["POST"])
 def update_delete():
     if request.method == "POST":
@@ -163,12 +158,15 @@ def update_delete():
         delete_comment(Comment, db, id_, flash)
     return redirect(url_for("reviews"))
 
+# Si se presionó el botón update redirije a la página
+# con el formulario de actualización
 @app.route("/update", methods=["GET", "POST"])
 @app.route("/update/<string:comment_text>/<int:id_>", methods=["GET", "POST"])
 def update(comment_text, id_):
     return render_template("update.html", comment_text=comment_text, id_=id_)
 
-@app.route("/update_comment", methods=["GET", "POST"])
+# Actualiza el comentario
+@app.route("/update_comment", methods=["POST"])
 def update_comment():
     if request.method == "POST":
         comment_text = str(request.form["comment_text"])
@@ -176,6 +174,10 @@ def update_comment():
         comment_update(Comment, db, id_, comment_text, flash)
 
     return redirect(url_for("reviews"))
+    
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.html"), 404
 
 if __name__ == "__main__":
     csrf.init_app(app)

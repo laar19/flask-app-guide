@@ -10,7 +10,7 @@ class User(db.Model):
     id          = db.Column(db.Integer, primary_key=True)
     username    = db.Column(db.String(20), unique=True)
     email       = db.Column(db.String(50))
-    password    = db.Column(db.String(93))
+    password    = db.Column(db.String(94))
     create_date = db.Column(db.DateTime, default=datetime.datetime.now)
     commets     = db.relationship("Comment")
 

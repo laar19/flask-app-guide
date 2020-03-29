@@ -14,7 +14,7 @@ class Config(object):
     # para gmail se necesita activar el acceso a aplicaciones
     # poco seguras https://myaccount.google.com/lesssecureapps
     MAIL_SERVER   = os.environ.get("MAIL_SERVER")
-    MAIL_PORT     = int(os.environ.get("MAIL_PORT"))
+    MAIL_PORT     = os.environ.get("MAIL_PORT")
     MAIL_USE_SSL  = verify_boolean(os.environ.get("MAIL_USE_SSL"))
     MAIL_USE_TLS  = verify_boolean(os.environ.get("MAIL_USE_TLS"))
     MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
@@ -24,8 +24,8 @@ class DevelopmentConfig(Config):
     DEBUG                          = verify_boolean(os.environ.get("DEBUG"))
     SQLALCHEMY_DATABASE_URI        = os.environ.get("SQLALCHEMY_DATABASE_URI")
     SQLALCHEMY_TRACK_MODIFICATIONS = verify_boolean(os.environ.get("SQLALCHEMY_TRACK_MODIFICATIONS"))
-
-    """
-    if not database_exists(SQLALCHEMY_DATABASE_URI):
-        create_database(SQLALCHEMY_DATABASE_URI)
-    """
+    
+    CHECK_DATABASE = verify_boolean(os.environ.get("CHECK_DATABASE"))
+    if CHECK_DATABASE:
+        if not database_exists(SQLALCHEMY_DATABASE_URI):
+            create_database(SQLALCHEMY_DATABASE_URI)
