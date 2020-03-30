@@ -1,5 +1,7 @@
 from flask      import session, render_template, redirect, url_for
 from flask_mail import Message
+from subprocess import call
+import json
 
 # Formatea la fecha
 def date_format(date):
@@ -45,3 +47,22 @@ def comment_update(Comment, db, id_, comment_text, flash):
 
     success_message = "Comentario actualizado"
     flash(success_message)
+
+def set_config():        
+    
+    with open("config.json") as json_data:
+        d = json.load(json_data)
+    
+    print("1- Localhost")
+    print("2- Pythonanywhere")
+    print("3- Heroku")
+    opc = int(input("Choose of the options above: "))
+
+    if opc == 1:
+        return d["localhost"]
+    elif opc == 2:
+        return d["pythonanywhere"]
+    elif opc == 3:
+        return d["heroku"]
+    else:
+        return None

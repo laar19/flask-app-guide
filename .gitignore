@@ -1,6 +1,6 @@
 #############################
-# FOLDERS
-config/
+# FILES
+config.json
 
 # VIRTUALENV
 bin/
