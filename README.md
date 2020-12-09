@@ -1,1 +1,1 @@
-# first_flask_app
+# flask-app-guide
